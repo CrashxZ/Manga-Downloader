@@ -1,6 +1,6 @@
 import os
 from urllib.request import FancyURLopener
-from urllib.request import Request, urlopen as uReq
+from urllib.request import Request, HTTPError , urlopen as uReq
 from bs4 import BeautifulSoup as soup
 
 
@@ -13,13 +13,24 @@ opener = AppURLopener()
 name = input("Enter manga name $>")
 name = name.replace(" ", "-")
 
-os.makedirs(name,exist_ok=True)
+
 url = "https://www.mangareader.net/" + name
 print(url)
 
 r = Request (url, headers={'User-Agent': 'Mozilla/5.0'})
+print('<<<--Searching-->>>');
 
-client = uReq(r)
+try :
+    client = uReq(r)
+except HTTPError as e:
+    if e.getcode() == 404:
+        print('Oops! I did not find anything. :(')
+        quit()
+
+
+
+print('Awesome! Found it. :)')
+os.makedirs(name,exist_ok=True)
 html_page = client.read()
 client.close()
 
